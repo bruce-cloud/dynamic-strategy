@@ -11,7 +11,7 @@ import java.util.List;
  * @author sephiroth.
  */
 @Data
-class Strategy {
+public class Strategy {
     /**
      * unique strategy name
      */

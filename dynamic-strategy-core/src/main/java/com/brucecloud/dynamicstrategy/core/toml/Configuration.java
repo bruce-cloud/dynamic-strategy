@@ -49,6 +49,14 @@ public class Configuration {
      */
     private Map<String, HandlerClass> handlerMap;
 
+    public Strategy getStrategy(String name) {
+        return strategyMap.get(name);
+    }
+
+    public HandlerClass getHandlerClass(String handlerName) {
+        return handlerMap.get(handlerName);
+    }
+
     public void prepare(String jarFileDir) {
         composeStrategy();
         composeHandler(jarFileDir);

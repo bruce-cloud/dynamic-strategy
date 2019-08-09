@@ -1,6 +1,7 @@
 package com.brucecloud.dynamicstrategy.core.loader;
 
 import com.brucecloud.dynamicstrategy.core.manager.ConfigurationManager;
+import com.brucecloud.dynamicstrategy.core.manager.StrategyManager;
 
 import static java.lang.Thread.sleep;
 
@@ -17,6 +18,9 @@ public class SimpleStrategyLoader extends AbstractStrategyLoader {
         super(jarFileDir, configFileName);
     }
 
+    /**
+     * load strategy
+     */
     @Override
     public void load() {
         logger.info("Prepare to load strategy config file and handler class");
@@ -24,6 +28,9 @@ public class SimpleStrategyLoader extends AbstractStrategyLoader {
         // load config
         configurationManager = ConfigurationManager.getInstance();
         configurationManager.load(configFileName, jarFileDir);
+
+        // set configurationManager to StrategyManager
+        StrategyManager.getInstance().setConfigurationManager(configurationManager);
 
         logger.info("Loaded strategy config file:[" + configFileName + "]");
 
@@ -53,7 +60,7 @@ public class SimpleStrategyLoader extends AbstractStrategyLoader {
     }
 
     /**
-     * reload
+     * reload strategy
      */
     public void reload() {
         // reload if the configuration file is updated

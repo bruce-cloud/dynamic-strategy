@@ -6,13 +6,12 @@ package com.brucecloud.dynamicstrategy.core;
  *
  * @author sephiroth.
  */
-public interface HandlerClass<R, P> {
+public interface HandlerClass<Context> {
     /**
      * Handle method to be implemented.
      *
-     * @param param
-     *            param
-     * @return handle result
+     * @param context context
+     * @return context
      */
-    R handler(P param);
+    Context handler(Context context);
 }

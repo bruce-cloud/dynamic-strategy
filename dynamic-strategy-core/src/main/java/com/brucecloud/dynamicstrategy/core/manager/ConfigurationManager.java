@@ -1,14 +1,14 @@
 package com.brucecloud.dynamicstrategy.core.manager;
 
+import com.brucecloud.dynamicstrategy.core.HandlerClass;
 import com.brucecloud.dynamicstrategy.core.toml.Configuration;
-import com.brucecloud.dynamicstrategy.core.toml.Handler;
+import com.brucecloud.dynamicstrategy.core.toml.Strategy;
 import com.moandjiezana.toml.Toml;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URL;
-import java.util.List;
 
 /**
  * This class provides some methods to manager configuration.
@@ -113,12 +113,12 @@ public class ConfigurationManager {
         configuration.prepare(jarFileDir);
     }
 
-    /**
-     * obtain handlers
-     *
-     * @return handlers
-     */
-    public List<Handler> getHandlerList() {
-        return this.configuration.getHandlerList();
+
+    public Strategy getStrategy(String name) {
+        return configuration.getStrategy(name);
+    }
+
+    public HandlerClass getHandlerClass(String handlerName) {
+        return configuration.getHandlerClass(handlerName);
     }
 }

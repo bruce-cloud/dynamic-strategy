@@ -10,5 +10,8 @@ import java.io.FileNotFoundException;
  */
 public interface StrategyLoader {
 
+    /**
+     * load strategy
+     */
     void load() throws FileNotFoundException;
 }
