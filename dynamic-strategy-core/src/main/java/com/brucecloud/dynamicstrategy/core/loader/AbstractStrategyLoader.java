@@ -4,6 +4,8 @@ import com.brucecloud.dynamicstrategy.core.manager.ConfigurationManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.*;
+
 /**
  * This class is template for loading Strategy config file.
  * created at 2019-08-08 14:39.
@@ -29,7 +31,19 @@ abstract class AbstractStrategyLoader implements StrategyLoader {
     /**
      * poller thread for reloading
      */
-    protected Thread poller;
+    protected ExecutorService executor = new ThreadPoolExecutor(1
+            , 1
+            , 0
+            , TimeUnit.MILLISECONDS
+            , new LinkedBlockingQueue<Runnable>()
+            , new ThreadFactory() {
+                @Override
+                public Thread newThread(Runnable r) {
+                    Thread thread = new Thread(r);
+                    thread.setName("Poller-Pool-1");
+                    return thread;
+                }
+            });
 
     /**
      * poller thread running flag

@@ -3,6 +3,8 @@ package com.brucecloud.dynamicstrategy.core.manager;
 import com.brucecloud.dynamicstrategy.core.toml.Configuration;
 import com.brucecloud.dynamicstrategy.core.toml.Handler;
 import com.moandjiezana.toml.Toml;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URL;
@@ -15,6 +17,10 @@ import java.util.List;
  * @author sephiroth.
  */
 public class ConfigurationManager {
+    /**
+     * logger
+     */
+    protected Logger logger = LoggerFactory.getLogger(ConfigurationManager.class);
 
     /**
      * strategy config object
@@ -59,27 +65,31 @@ public class ConfigurationManager {
      * load config file
      *
      * @param configFileName config file name
+     * @param jarFileDir     jar path
      */
-    public void load(String configFileName) {
+    public void load(String configFileName, String jarFileDir) {
         // load config file
         File configFile = new File(absolutePathUrl.getPath(), configFileName);
 
-        transformFromTomlToConfiguration(configFile);
+        transformFromTomlToConfiguration(configFile, jarFileDir);
     }
 
     /**
      * reload config file
      *
      * @param configFileName config file name
+     * @param jarFileDir     jar path
      * @return true or false
      */
-    public boolean reload(String configFileName) {
+    public boolean reload(String configFileName, String jarFileDir) {
         // load config file
         File configFile = new File(absolutePathUrl.getPath(), configFileName);
 
         // reload if the configuration file is updated
         if (this.lastModified < configFile.lastModified()) {
-            transformFromTomlToConfiguration(configFile);
+            logger.info("Strategy config file changed, reloading...");
+            transformFromTomlToConfiguration(configFile, jarFileDir);
+            logger.info("Reload Finished");
             return true;
         }
         return false;
@@ -89,8 +99,9 @@ public class ConfigurationManager {
      * toml transform to Configuration
      *
      * @param configFile config file
+     * @param jarFileDir jar path
      */
-    private void transformFromTomlToConfiguration(File configFile) {
+    private void transformFromTomlToConfiguration(File configFile, String jarFileDir) {
         // update last modified time
         lastModified = configFile.lastModified();
 
@@ -99,7 +110,7 @@ public class ConfigurationManager {
 
         // toml transform configuration
         configuration = toml.to(Configuration.class);
-        configuration.prepare();
+        configuration.prepare(jarFileDir);
     }
 
     /**

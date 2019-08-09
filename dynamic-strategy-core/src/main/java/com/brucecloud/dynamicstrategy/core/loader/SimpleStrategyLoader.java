@@ -1,11 +1,8 @@
 package com.brucecloud.dynamicstrategy.core.loader;
 
 import com.brucecloud.dynamicstrategy.core.manager.ConfigurationManager;
-import com.brucecloud.dynamicstrategy.core.toml.Handler;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.List;
+import static java.lang.Thread.sleep;
 
 /**
  * Loader class for loading Strategy config file<br>
@@ -21,22 +18,45 @@ public class SimpleStrategyLoader extends AbstractStrategyLoader {
     }
 
     @Override
-    public void load() throws FileNotFoundException {
+    public void load() {
         logger.info("Prepare to load strategy config file and handler class");
 
         // load config
         configurationManager = ConfigurationManager.getInstance();
-        configurationManager.load(configFileName);
+        configurationManager.load(configFileName, jarFileDir);
 
         logger.info("Loaded strategy config file:[" + configFileName + "]");
 
-        // obtain handlers
-        List<Handler> handlerList = configurationManager.getHandlerList();
+        // start poller for change
+        startPoller();
+        logger.info("Started poller for dynamic strategy loading.");
+    }
 
-        File jarDir = new File(jarFileDir);
+    /**
+     * start the poller
+     */
+    private void startPoller() {
+        Runnable poller = new Runnable() {
+            @Override
+            public void run() {
+                while (isRunning) {
+                    try {
+                        sleep(10 * 1000);
+                        reload();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+        executor.execute(poller);
+    }
 
-        if (!jarDir.exists()) {
-            throw new FileNotFoundException("Strategy jar does'nt exist");
-        }
+    /**
+     * reload
+     */
+    public void reload() {
+        // reload if the configuration file is updated
+        configurationManager.reload(configFileName, jarFileDir);
     }
 }
